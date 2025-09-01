@@ -1,6 +1,7 @@
 package particles
 
 import (
+	"fmt"
 	"math"
 	"time"
 )
@@ -67,24 +68,36 @@ func (ps *ParticleSystem) Print() [][]rune {
 
 	for row := 0; row < ps.Y; row++ {
 		count := make([]int, 0)
-		for col := 0; col < ps.Y; col++ {
+		for col := 0; col < ps.X; col++ {
 			count = append(count, 0)
 		}
 		counts = append(counts, count)
 	}
 
+	activeParticles := 0
 	for _, p := range ps.particles {
 		row := int(math.Floor(p.y))
 		col := int(math.Floor(p.x))
 
-		counts[row][col]++
+		if p.Lifetime > 0 && row >= 0 && row < len(counts) && col >= 0 && col < len(counts[row]) {
+			activeParticles++
+			fmt.Printf("DEBUG: Partícula ativa - x: %.2f, y: %.2f, row: %d, col: %d\n", p.x, p.y, row, col)
+			counts[row][col]++
+		}
 	}
+
+	fmt.Printf("DEBUG: Active particles - %d\n", activeParticles)
 
 	out := make([][]rune, 0)
 	for r, row := range counts {
 		outRow := make([]rune, 0)
 		for c := range row {
-			outRow = append(outRow, ps.ascii(c, r, counts))
+			rune := ps.ascii(c, r, counts)
+			outRow = append(outRow, rune)
+
+			if rune != ' ' {
+				fmt.Printf("DEBUG: Rune - %c\n", rune)
+			}
 		}
 		out = append(out, outRow)
 	}
