@@ -6,8 +6,8 @@ import (
 )
 
 type Particle struct {
-	lifetime int64
-	speed    float64
+	Lifetime int64
+	Speed    float64
 
 	x float64
 	y float64
